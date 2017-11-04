@@ -1,0 +1,3 @@
+[console_scripts]
+rw_corr = rw_corr.main:main
+
