@@ -3,8 +3,8 @@ from .algorithms import msd_1D, msd_2D, tortuosity_local, tortuosity_dm
 from NetGrowth import get_axon_path, get_properties
 import numpy as np
 from scipy import optimize
-from scipy import signal as sgl
-from uncertainties import unumpy
+# from scipy import signal as sgl
+# from uncertainties import unumpy
 
 class Ensemble(object):
 
@@ -18,14 +18,22 @@ class Ensemble(object):
         self.xy   = []
 
     def add_sequence(self,neurons):
+        first_passage=True
         for neuron in neurons:
             xy, polar = get_axon_path(neuron=neurons[neuron]['data'])
+            if first_passage:
+                first_passage =False
+                min_shap = xy.shape[1]
             self.theta.append(polar[1])
             self.r.append(polar[0])
             self.xy.append(xy)
-        self.theta = np.array(self.theta)
-        self.r     = np.array(self.r)
-        self.xy    = np.array(self.xy)
+            ### save shortest shape, alle equivalent is required:
+            min_shap = xy.shape[1] if xy.shape[1] < min_shap else min_shap
+        min_shap=min_shap-2
+        # print(self.theta)
+        self.theta = np.array([theta[:min_shap] for theta in self.theta])
+        self.r     = np.array([r[:min_shap] for r in self.r])
+        self.xy    = np.array([xy[:,:min_shap] for xy in self.xy])
 
 
     def characterize(self, max_len, first=1):
