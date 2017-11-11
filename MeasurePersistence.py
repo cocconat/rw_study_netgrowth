@@ -12,9 +12,9 @@ max_len    = 100
 neuron_params = {
         "axon_angle":0.,
         "use_tubulin": False,
-        "rw_delta_corr": 8.,
-        "rw_memory_tau": 700.,
-        "rw_sensing_angle":0.039433,
+        "rw_delta_corr": 20.,
+        "rw_memory_tau": 70.,
+        "rw_sensing_angle":0.09433,
         "speed_growth_cone": 9.95,
         }
 
@@ -110,6 +110,9 @@ def Test(neuron_params):
     fit = fits[list(fits.keys())[0]]
     fit = rw_corr.analyse_fit(fit, info=info)
     fit= OnlyValues(fit)
+    CleanFolder(folder)
+    RunNetGrowth(1, 1, neuron_params, folder,1)
+    CleanFolder(folder,make=False)
     print(" ################################### \n")
     print(" Memory Tau: {} um \n".format(fit["memory"]))
     print(" Correlation Tau: {} um \n".format(fit["pers_gauss"]))
@@ -117,9 +120,6 @@ def Test(neuron_params):
     print(" Tortuosity: {} \n".format(fit["tortuosity_local"]))
     print(" Persistence Lenght: {} um \n".format(fit["pers_length"]))
     print(" ################################## \n")
-    CleanFolder(folder)
-    RunNetGrowth(1, 1, neuron_params, folder,1)
-    CleanFolder(folder,make=False)
     return fit["pers_length"], fit["tortuosity_local"]
 
     # json.dump(fit,open(os.path.join(folder,"fit.json"),'w'))
