@@ -44,7 +44,8 @@ def RunNetGrowth(n_samples, n_procs, neuron_params, save_path = "tmp_measure", p
 
     gids =None
     # plt.show()
-    gids = NetGrowth.CreateNeurons(     n=experiment_params["num_neurons"],
+    gids = NetGrowth.CreateNeurons(     experiment_params["num_neurons"],
+                                        "random_walk",
                                         params=neuron_params,
                                         axon_params=neuron_params,
                                         dendrite_params=None,
@@ -54,7 +55,7 @@ def RunNetGrowth(n_samples, n_procs, neuron_params, save_path = "tmp_measure", p
     if plot:
         NetGrowth.PlotNeuron()
     NetGrowth.SaveJson(filepath=save_path)
-    NetGrowth.SaveSwc (filepath=save_path,swc_resolution = 20)
+    NetGrowth.SaveSwc (filepath=save_path,swc_resolution = 10)
     # NetGrowth.SaveJson(filepath=tmp_dir)
     NetGrowth.SaveSwc(filepath=os.path.join(os.getcwd(),save_path),swc_resolution = 10)
     # NetGrowth.PlotNeuron(show_nodes=True)
@@ -78,7 +79,7 @@ def OnlyValues(main_dict):
 def Test(neuron_params):
     folder = os.path.join(os.getcwd(),"tmp_measure")
     CleanFolder(folder)
-    RunNetGrowth(100, 5, neuron_params, folder)
+    RunNetGrowth(100, 5, neuron_params, folder )
     NG_populations = NetGrowth.SimulationsFromFolder(folder)
     ensembles, fits =rw_corr.AnalyseNetgrowthRW(NG_populations,int(max_len))
     # return ensembles
@@ -109,7 +110,7 @@ neuron_params = {
         "rw_delta_corr": 8.,
         "rw_memory_tau": 700.,
         "rw_sensing_angle":0.039433,
-        "speed_growth_cone": 0.95,
+        "speed_growth_cone": 9.95,
         }
 
 Test(neuron_params)
