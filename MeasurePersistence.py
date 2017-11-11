@@ -1,8 +1,30 @@
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
+
+# MeasurePersistence measuresthe persistence length and the tortuosity resulting from a set of given parameters, this is very useful for NetGrowth user.
+
+
+#These parameters are ok with a persistence length shoerter than 1mm
+sim_length = 1000
+max_len    = 100
+
+#These parameters must be set.
+neuron_params = {
+        "axon_angle":0.,
+        "use_tubulin": False,
+        "rw_delta_corr": 8.,
+        "rw_memory_tau": 700.,
+        "rw_sensing_angle":0.039433,
+        "speed_growth_cone": 9.95,
+        }
+
+# This software is part of NetGrowth project and SENEC initiative.
+
+
 import NetGrowth
 import rw_corr
 import os, json, shutil
 import numpy as np
-import sys
 
 
 def InfoFromJson(info_file, dump_kernel_params=False, dump_neuron_params=True):
@@ -102,15 +124,5 @@ def Test(neuron_params):
 
     # json.dump(fit,open(os.path.join(folder,"fit.json"),'w'))
 
-sim_length = 1000
-max_len    = 80
-neuron_params = {
-        "axon_angle":0.,
-        "use_tubulin": False,
-        "rw_delta_corr": 8.,
-        "rw_memory_tau": 700.,
-        "rw_sensing_angle":0.039433,
-        "speed_growth_cone": 9.95,
-        }
 
 Test(neuron_params)
