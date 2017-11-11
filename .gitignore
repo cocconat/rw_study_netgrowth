@@ -1,2 +1,4 @@
 ./simulations/
 **.pdf
+**.egg-info
+**_pychace__
