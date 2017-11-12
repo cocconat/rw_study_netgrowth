@@ -110,9 +110,9 @@ def Test(neuron_params):
     fit = fits[list(fits.keys())[0]]
     fit = analyse_fit(fit, info=info)
     fit= OnlyValues(fit)
-    # CleanFolder(folder)
-    # RunNetGrowth(1, 1, neuron_params, folder,1)
-    # CleanFolder(folder,make=False)
+    CleanFolder(folder)
+    RunNetGrowth(1, 1, neuron_params, folder,1)
+    CleanFolder(folder,make=False)
     print(" ################################### \n")
     print(" Memory Tau: {} um \n".format(fit["memory"]))
     print(" Correlation Tau: {} um \n".format(fit["pers_gauss"]))
