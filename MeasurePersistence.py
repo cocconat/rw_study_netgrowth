@@ -12,9 +12,9 @@ max_len    = 200
 neuron_params = {
         "axon_angle":0.,
         "use_tubulin": False,
-        "rw_delta_corr": 20.,
+        "rw_delta_corr": 270.,
         "rw_memory_tau": 500.,
-        "rw_sensing_angle":0.029433,
+        "rw_sensing_angle":1.,
         "speed_growth_cone": 9.95,
         }
 
