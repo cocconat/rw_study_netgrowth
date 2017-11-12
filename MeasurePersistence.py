@@ -5,16 +5,16 @@
 
 
 #These parameters are ok with a persistence length shoerter than 1mm
-sim_length = 1000
-max_len    = 100
+sim_length = 2000
+max_len    = 200
 
 #These parameters must be set.
 neuron_params = {
         "axon_angle":0.,
         "use_tubulin": False,
         "rw_delta_corr": 20.,
-        "rw_memory_tau": 70.,
-        "rw_sensing_angle":0.09433,
+        "rw_memory_tau": 500.,
+        "rw_sensing_angle":0.029433,
         "speed_growth_cone": 9.95,
         }
 
@@ -22,7 +22,7 @@ neuron_params = {
 
 
 import NetGrowth
-import rw_corr
+from  NetGrowthRwBenchmark import AnalyseNetgrowthRW, analyse_fit
 import os, json, shutil
 import numpy as np
 
@@ -103,24 +103,25 @@ def Test(neuron_params):
     CleanFolder(folder)
     RunNetGrowth(100, 5, neuron_params, folder )
     NG_populations = NetGrowth.SimulationsFromFolder(folder)
-    ensembles, fits =rw_corr.AnalyseNetgrowthRW(NG_populations,int(max_len))
+    ensembles, fits =AnalyseNetgrowthRW(NG_populations,int(max_len))
     # return ensembles
     # rw_corr.plot_results(ensembles, plot=True)
     info =InfoFromJson(os.path.join(folder,"info.json"))
     fit = fits[list(fits.keys())[0]]
-    fit = rw_corr.analyse_fit(fit, info=info)
+    fit = analyse_fit(fit, info=info)
     fit= OnlyValues(fit)
-    CleanFolder(folder)
-    RunNetGrowth(1, 1, neuron_params, folder,1)
-    CleanFolder(folder,make=False)
+    # CleanFolder(folder)
+    # RunNetGrowth(1, 1, neuron_params, folder,1)
+    # CleanFolder(folder,make=False)
     print(" ################################### \n")
     print(" Memory Tau: {} um \n".format(fit["memory"]))
     print(" Correlation Tau: {} um \n".format(fit["pers_gauss"]))
     print(" Sigma: {} \n".format(fit["sigma"]))
     print(" Tortuosity: {} \n".format(fit["tortuosity_local"]))
     print(" Persistence Lenght: {} um \n".format(fit["pers_length"]))
+    print(" Persistence Lenght from cosine: {} um \n".format(fit["cosine"]))
     print(" ################################## \n")
-    return fit["pers_length"], fit["tortuosity_local"]
+    return fit["pers_length"], fit["tortuosity_local"], fit
 
     # json.dump(fit,open(os.path.join(folder,"fit.json"),'w'))
 
