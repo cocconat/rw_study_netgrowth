@@ -91,24 +91,24 @@ def plot_results(ensembles, save_path=None, plot=False):
                     # ensemble.effective_length*ensemble.fits['msd_2D'][0][1] +
                     ensemble.fits['msd_2D'][0][2], '--', c=sorted_names[n])
 
-        ax3.set_title("Local tortuosity\n")
+        ax3.set_title("Correlation function\n")
         ax3.set_xlabel("length um")
-        ax3.set_ylabel("tortuosity")
+        ax3.set_ylabel(r"\langle \bar b_i \bar b_{i+n} \rangle")
         ax3.plot(ensemble.effective_length,
-                ensemble.tortuosity_local[:,0],
+                ensemble.cosine[:,0],
                 label=ensemble.name,
                 c=sorted_names[n])
 
-        ax3.errorbar(ensemble.effective_length,
-                    ensemble.tortuosity_local[:,0],
-                    yerr=yerr(ensemble.tortuosity_local),
-                    c=sorted_names[n],
-                    alpha=0.5,
-                    errorevery=10+n)
+        # ax3.errorbar(ensemble.effective_length,
+                    # ensemble.cosine[:,0],
+                    # yerr=yerr(ensemble.cosine),
+                    # c=sorted_names[n],
+                    # alpha=0.5,
+                    # errorevery=10+n)
         # ax3.plot(ensemble.effective_length,np.ones(len(ensemble.effective_length))*
         #     ensemble.fits['tortuosity_local'][0][0], '--', c=sorted_names[n], alpha=0.3)
-        ax3.plot(ensemble.effective_length,\
-                  np.ones(len(ensemble.effective_length))*ensemble.fits['tortuosity_local'][0][0], '--', c=sorted_names[n])
+        # ax3.plot(ensemble.effective_length,\
+                  # np.ones(len(ensemble.effective_length))*ensemble.fits['cosine'][0][0], '--', c=sorted_names[n])
 
         # variance = [path[x]*path[x] for x in np.arange(10, len(path),10)]
         ax4.set_title("angle MSD")
