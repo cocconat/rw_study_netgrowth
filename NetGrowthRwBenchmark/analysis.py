@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
+# This software is part of the NetGrowth project and the SENEC initiative
+
 from . import Ensemble
 
 def AnalyseNetgrowthRW(NG_populations, max_len=880, first=10):
@@ -24,7 +28,7 @@ def AnalyseNetgrowthRW(NG_populations, max_len=880, first=10):
     fits={}
     for population in NG_populations:
         ensemble=Ensemble(population['info'])
-        ensemble.add_sequence(population['neurons'])
+        ensemble.add_population(population['neurons'])
         ensemble.characterize(max_len,first)
         fits[ensemble.name]=ensemble.fit(max_len,first)
         ensembles.append(ensemble)

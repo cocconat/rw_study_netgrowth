@@ -140,10 +140,10 @@ def test_test(folder):
 
 
 folder = sys.argv[1]
-# test_diffusion(folder)
+test_diffusion(folder)
 # test_memory(folder)
 # test_variance(folder)
 # linear_mem_pers(folder)
-memory_vs_pers(folder,0.5)
-memory_vs_pers(folder,1.0)
+# memory_vs_pers(folder,0.5)
+# memory_vs_pers(folder,1.0)
 # memory_vs_pers(folder,100)

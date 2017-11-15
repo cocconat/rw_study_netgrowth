@@ -1,28 +1,29 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
+# This software is part of the NetGrowth project and the SENEC initiative
 
-# MeasurePersistence measuresthe persistence length and the tortuosity resulting from a set of given parameters, this is very useful for NetGrowth user.
+# MeasurePersistence measures the persistence length and the tortuosity resulting from a set of given parameters, this is very useful for NetGrowth user.
 
 
 #These parameters are ok with a persistence length shoerter than 1mm
-sim_length = 2000
+sim_length = 1000
 max_len    = 200
 
 #These parameters must be set.
 neuron_params = {
         "axon_angle":0.,
         "use_tubulin": False,
-        "rw_delta_corr": 270.,
-        "rw_memory_tau": 500.,
-        "rw_sensing_angle":1.,
-        "speed_growth_cone": 9.95,
+        "rw_delta_corr": 0.1,
+        "rw_memory_tau": 0.7,
+        "rw_sensing_angle":0.15,
+        "speed_growth_cone": 1.05,
         }
 
 # This software is part of NetGrowth project and SENEC initiative.
 
 
 import NetGrowth
-from  NetGrowthRwBenchmark import AnalyseNetgrowthRW, analyse_fit
+from  NetGrowthRwBenchmark import AnalyseNetgrowthRW, analyse_fit, OnlyValues
 import os, json, shutil
 import numpy as np
 
@@ -89,19 +90,11 @@ def CleanFolder(tmp_dir, make=True):
     if make:
         os.mkdir(tmp_dir)
 
-def OnlyValues(main_dict):
-    values={}
-    for key in main_dict.keys():
-        try:
-            values[key]=main_dict[key]["values"]['a0']
-        except:
-            values[key]=main_dict[key]
-    return values
 
-def Test(neuron_params):
+def Test(neuron_params, plot=False):
     folder = os.path.join(os.getcwd(),"tmp_measure")
     CleanFolder(folder)
-    RunNetGrowth(100, 5, neuron_params, folder )
+    RunNetGrowth(200, 5, neuron_params, folder )
     NG_populations = NetGrowth.SimulationsFromFolder(folder)
     ensembles, fits =AnalyseNetgrowthRW(NG_populations,int(max_len))
     # return ensembles
@@ -110,8 +103,9 @@ def Test(neuron_params):
     fit = fits[list(fits.keys())[0]]
     fit = analyse_fit(fit, info=info)
     fit= OnlyValues(fit)
-    CleanFolder(folder)
-    RunNetGrowth(1, 1, neuron_params, folder,1)
+    if plot:
+        CleanFolder(folder)
+        RunNetGrowth(1, 1, neuron_params, folder,True)
     CleanFolder(folder,make=False)
     print(" ################################### \n")
     print(" Memory Tau: {} um \n".format(fit["memory"]))
@@ -121,7 +115,7 @@ def Test(neuron_params):
     print(" Persistence Lenght: {} um \n".format(fit["pers_length"]))
     print(" Persistence Lenght from cosine: {} um \n".format(fit["cosine"]))
     print(" ################################## \n")
-    return fit["pers_length"], fit["tortuosity_local"], fit
+    return fit["pers_length"], fit["tortuosity_local"], fit['cosine']
 
     # json.dump(fit,open(os.path.join(folder,"fit.json"),'w'))
 

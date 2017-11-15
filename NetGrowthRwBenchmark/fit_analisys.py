@@ -1,7 +1,7 @@
-import json, os, collections, random
-import sys
+import json, os
 import numpy as np
 import matplotlib.pyplot as plt
+import warnings
 
 def fit_from_folder(fit_folder):
     jsons={json_file.split(".")[0]:json.load(open(fit_folder+json_file,'r')) for json_file in os.listdir(fit_folder) if json_file.split(".")[1]=="json"}
@@ -19,6 +19,15 @@ def analyse_fit_bunch(fits, info=None, names=None):
         assert(len(names)==len(fits))
         for n, fit in enumerate(fits):
             analyse_fit(fit, name=names[n], info=info)
+
+def OnlyValues(main_dict):
+    values={}
+    for key in main_dict.keys():
+        try:
+            values[key]=main_dict[key]["values"]['a0']
+        except:
+            values[key]=main_dict[key]
+    return values
 
 def analyse_fit(fit, info=None, name=None):
     """
@@ -58,11 +67,11 @@ def analyse_fit(fit, info=None, name=None):
         fit['sigma'] = info['rw_sensing_angle']
         fit['pers_gauss'] = info['rw_delta_corr']
     else:
-        raise ValueError("Name or info is necessary for fit")
+        warnings.warn("Name or info is necessary for fit, algorithm values not reported")
 
     ## get values from measures
     pers_error=fit['msd_1D_ramp']['errors']['a0']/fit['msd_1D_ramp']['values']['a0']
-    fit['pers_length']={'values':{'a0': 1./fit['msd_1D_ramp']['values']['a0']},
+    fit['pers_length']={'values':{'a0':2./fit['msd_1D_ramp']['values']['a0']},
             'errors':{'a0':pers_error/fit['msd_1D_ramp']['values']['a0']}}
     fit['tortuosity_dm']={'values':{'a0': 1./fit['tortuosity_dm']['values']['a0']},
                                 'errors':{'a0':0}}

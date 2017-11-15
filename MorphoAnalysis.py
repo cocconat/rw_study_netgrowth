@@ -7,21 +7,21 @@
 # This software is part of NetGrowth project and SENEC initiative.
 
 import os, json
-from rw_corr import AnalyseNetgrowthRW, analyse_fit, plot_results, SwcToSegments, SegmentsToNetgrowth, fit_from_file, plot_fits, print_fits
+from NetGrowthRwBenchmark import AnalyseNetgrowthRW, analyse_fit, plot_results, SwcToSegments, SegmentsToNetgrowth, fit_from_file, plot_fits, print_fits, OnlyValues
 import NetGrowth
 import argparse
 import numpy as np
 
-parser = argparse.ArgumentParser(description='Evaluate Random Walk properties')
-parser.add_argument('--fit', action='append',
-                    help = 'add this file to fit list, as many as user reuired')
-parser.add_argument('--fit_parameter',type=str, help = "which parameter in respect to perform the fit")
+parser = argparse.ArgumentParser(description='Evaluate Random Walk properties for SWC files. It can be used to evaluate file generated through NetGrowth or downloaded by the NeuroMorpho.org archive.')
+parser.add_argument('--fit', action='append', default =None,
+                    help = 'Add `fit.json` file generated from the MorphAnlaysis to fit list to confront with other results, write --fit for each file')
+parser.add_argument('--fit_parameter',type=str, help = "the parameter in respect to perform the fit")
 parser.add_argument('--folder','-f', type=str, default=None,
-                    help='Folder with NetGrowth experiment')
+                    help='Folder with NetGrowth experiment, if folder contains a `morphology.swc` file analyze it, other way analyze all the subfolders')
 parser.add_argument('--neuron','-n', type=str, default=None, action= 'append',
-                    help='Folder with SWC file, from NeuroMorpho')
-parser.add_argument('--max_len','-l', type=str, default=None,
-                    help='max len to analyze. 100 [um] is fine.')
+                    help='Folder with SWC files downloaded from NeuroMorpho')
+parser.add_argument('--max_len','-l', type=str, default=100,
+                    help='max len, in micron, to analyze. 100 [um] is default. Micrometers is the standard unit for Swc files')
 
 args = parser.parse_args()
 
@@ -52,8 +52,15 @@ if args.neuron:
     ensembles, fits =AnalyseNetgrowthRW(NG_populations,int(args.max_len))
     json.dump(fits,open("retina_fit.json",'w'))
     plot_results(ensembles, "retina_plot", plot=True)
+    fit = OnlyValues(analyse_fit(fits['axon']))
+    # dendrites = OnlyValues(fits['dendrites'])
+    print(" ################################### \n")
+    print(" Tortuosity: {} \n".format(fit["tortuosity_local"]))
+    print(" Persistence Lenght: {} um \n".format(fit["pers_length"]))
+    print(" Persistence Lenght from cosine: {} um \n".format(fit["cosine"]))
+    print(" ################################## \n")
 
-if args.fit !=[]:
+if args.fit is not None:
     fits_list=[]
     for fit_file in args.fit:
         fit = fit_from_file(fit_file)

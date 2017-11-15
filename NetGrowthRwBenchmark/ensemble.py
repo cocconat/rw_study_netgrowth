@@ -4,21 +4,25 @@ from NetGrowth import get_axon_path, get_properties
 import numpy as np
 from scipy import optimize
 import matplotlib.pyplot as plt
-# from scipy import signal as sgl
-# from uncertainties import unumpy
 
 class Ensemble(object):
+    """
+    Store all the neurons in an unique object.
+    Create the ensemble adding a population to it.
+    Once a population is ready perform analysis on it.
+    """
 
     def __init__(self, description):
         try:
             self.name, self.description =get_properties(description)
         except:
             self.name, self.description = description["name"], description["description"]
+        #### Store a (N,max_len) matrix, where each neuron maintain it's properties
         self.theta= []
         self.r    = []
         self.xy   = []
 
-    def add_sequence(self,neurons):
+    def add_population(self,neurons):
         first_passage=True
         for neuron in neurons:
             xy, polar = get_axon_path(neuron=neurons[neuron]['data'])
@@ -31,11 +35,18 @@ class Ensemble(object):
             ### save shortest shape, alle equivalent is required:
             min_shap = xy.shape[1] if xy.shape[1] < min_shap else min_shap
         min_shap=min_shap-2
-        # print(self.theta)
+        ### Single neurons properties
         self.theta = np.array([theta[:min_shap] for theta in self.theta])
         self.r     = np.array([r[:min_shap] for r in self.r])
         self.xy    = np.array([xy[:,:min_shap] for xy in self.xy])
 
+        ### Whole population averaged properties
+        self.tortuosity_local =None
+        self.msd_1D = None
+        self.cosine = None
+        self.msd_2D = None
+        self.tortuosity_dm = None
+        self.effective_length = None
 
     def characterize(self, max_len, first=1):
         """
@@ -53,6 +64,7 @@ class Ensemble(object):
         max_len: maximal relative distance to measure for the different algorithms.
         decorrelation_length: distance of correlation to resize the path in uncorrelated segments.
         """
+
         if first < 1:
             raise Exception("first value has to be greater than one or dividion by zero occurs")
         self.max_len=max_len
@@ -60,9 +72,8 @@ class Ensemble(object):
         self.theta=np.array(self.theta)
         self.xy=np.array(self.xy)
 
-        print ("max length is", self.max_len)
+        # print ("max length is", self.max_len)
         self.tortuosity_local, self.max_len =  tortuosity_local(self.theta,self.r,self.max_len, first)
-        print ("max length is", self.max_len)
         self.msd_1D= msd_1D(self.theta,self.max_len,first)
         self.cosine= cosine_correlation(self.theta,self.max_len,first)
         self.msd_2D  = msd_2D(self.xy,self.max_len,first)
@@ -73,6 +84,9 @@ class Ensemble(object):
             self.effective_length[shift-first]=np.sum(length[first:shift])
 
     def fit(self,last,first=0):
+        """
+        Fit the averaged quantities
+        """
         def constant(x,k):
             return k
         def linear(x,m,b):
@@ -128,10 +142,12 @@ class Ensemble(object):
             self.fits['msd_2D']= self.fits['msd_2D_quad']
             self.fits.pop('msd_2D_quad')
         self.results={}
-        # print(self.fits['cosine'])
-        # plt.plot(self.effective_length[:],self.cosine[:,0])
-        # plt.plot(self.effective_length[:],exponential(self.effective_length[:],*self.fits['cosine'][0]))
-        # plt.show()
+        DEBUG_FIT=False
+        if DEBUG_FIT:
+            print(self.fits['cosine'])
+            plt.plot(self.effective_length[:],self.cosine[:,0])
+            plt.plot(self.effective_length[:],exponential(self.effective_length[:],*self.fits['cosine'][0]))
+            plt.show()
         for key in self.fits:
             self.results[key]={"values":{"a"+str(n) : x for n, x in enumerate (self.fits[key][0])},
                              "errors":{ "a"+str(n) :x for n, x in enumerate (np.diag(self.fits[key][1]))}}

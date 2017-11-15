@@ -1,3 +1,16 @@
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
+# This software is part of the NetGrowth project and the SENEC initiative
+#
+# The file contains algorithms to compute the following characterization
+
+# cosine_correlation
+# msd_1D
+# msd_2D
+# msd_fft
+# tortuosity_dm Euclidean distance over curvilinear absciss
+# tortuosity_local Measures the average variation of the angle
+
 import numpy as np
 from scipy import signal
 # import uncertainties as un
@@ -27,11 +40,11 @@ def tortuosity_local(theta,rho,max_len,first=1):
 
     # theta =  (arrays[:,:].transpose()- arrays[:,0]).transpose()
     # differential measure reduce size -1
-    print(theta.shape)
+    # print(theta.shape)
     theta = np.abs( theta[:,1:] - theta[:,:-1])
     rho   =rho[:,1:]
     if max_len> len(rho[1,:-1]):
-        print ("correcting max length to: ", len(rho[1,:-1])-10)
+        # print ("correcting max length to: ", len(rho[1,:-1])-10)
         max_len=len(rho[1,:-1])-10
     tortuosity_local = np.zeros((max_len,3))
     length_local = np.zeros((max_len,3))
