@@ -7,8 +7,9 @@
 # This software is part of NetGrowth project and SENEC initiative.
 
 import os, json
-from NetGrowthRwBenchmark import AnalyseNetgrowthRW, analyse_fit, plot_results, SwcToSegments, SegmentsToNetgrowth, fit_from_file, plot_fits, print_fits, OnlyValues
+from NetGrowthRwBenchmark import AnalyseNetgrowthRW, analyse_fit, plot_results,  fit_from_file, plot_fits, print_fits, OnlyValues
 import NetGrowth
+from NetGrowth import SwcToSegments, SegmentsToNetgrowth
 import argparse
 import numpy as np
 

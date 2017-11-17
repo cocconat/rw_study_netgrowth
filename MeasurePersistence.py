@@ -120,4 +120,5 @@ def Test(neuron_params, plot=False):
     # json.dump(fit,open(os.path.join(folder,"fit.json"),'w'))
 
 
-Test(neuron_params)
+if __name__=="__main__":
+    Test(neuron_params)

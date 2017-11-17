@@ -47,37 +47,68 @@ def LinearSearch(neuron_params):
 
     return max_memory, min_memory, max_cosine, min_cosine, max_msd,min_msd, max_tortuosity, min_tortuosity
 
+
 ## Grid search on the memory
-couple=[]
-sigma_precision=20
-corr_precision=20
-neuron_params = {
-        "axon_angle":0.,
-        "use_tubulin": False,
-        "rw_delta_corr": 0.001,
-        "rw_memory_tau": 10.,
-        "rw_sensing_angle":0.05,
-        "speed_growth_cone": 1.,
-        }
+if __name__=="__main__":
+    couple=[]
+    sigma_precision=20
+    corr_precision=20
+    neuron_params = {
+            "axon_angle":0.,
+            "use_tubulin": False,
+            "rw_delta_corr": 0.001,
+            "rw_memory_tau": 10.,
+            "rw_sensing_angle":0.05,
+            "speed_growth_cone": 1.,
+            }
 
-max_persistence = 300
-min_persistence = 50
+    max_persistence = 300
+    min_persistence = 50
 
-for g in np.linspace(0.1,2,11):
-    for x in np.linspace(0.1,1,11):
-        neuron_params['rw_sensing_angle']=x
-        neuron_params['rw_delta_corr']=g
-        try:
-            values = LinearSearch(neuron_params)
-            couple.append((x,g,*values))
-        except:
-            couple.append((x,g,*tuple([np.nan]*len(values))))
-            pass
+    for g in np.linspace(0.1,2,11):
+        for x in np.linspace(0.1,1,11):
+            neuron_params['rw_sensing_angle']=x
+            neuron_params['rw_delta_corr']=g
+            try:
+                values = LinearSearch(neuron_params)
+                couple.append((x,g,*values))
+            except:
+                couple.append((x,g,*tuple([np.nan]*len(values))))
+                pass
 
 
-data_array = np.array(couple)
-np.savetxt("plausible_values",data_array)
-# data_array = data_array.reshape()
+    data_array = np.array(couple)
+    np.savetxt("plausible_values",data_array)
+    # data_array = data_array.reshape()
 
-def pcplot(data_array):
-    grid_corr = data_array[:,1].reshape(sigma_precision,corr_precision)
+def pcplot(data):
+    import matplotlib.pyplot as plt
+    from matplotlib import rc
+    rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+    ## for Palatino and other serif fonts use:
+    #rc('font',**{'family':'serif','serif':['Palatino']})
+    rc('text', usetex=True)
+    fig, ((ax1, ax2),( ax3, ax4)) = plt.subplots(2,2)
+    ax1.set_xlabel("sigma")
+    ax1.set_ylabel("correlation coefficient")
+    ax2.set_xlabel("sigma")
+    ax2.set_ylabel("correlation coefficient")
+    ax3.set_xlabel("sigma")
+    ax3.set_ylabel("correlation coefficient")
+    ax4.set_xlabel("sigma")
+    ax4.set_ylabel("correlation coefficient")
+    a=ax3.pcolor(data[:,:7,0],np.exp(1./-data[:,:7,1]),np.exp(1./-data[:,:7,2]))
+    b=ax4.pcolor(data[:,:7,0],np.exp(1./-data[:,:7,1]),np.exp(1./-data[:,:7,3]))
+    c=ax1.pcolor(data[:,:7,0],np.exp(-data[:,:7,1]),-data[:,:7,4])
+    d=ax2.pcolor(data[:,:7,0],np.exp(-data[:,:7,1]),-data[:,:7,5])
+    fig.colorbar(a)
+    fig.colorbar(b)
+    fig.colorbar(c)
+    fig.colorbar(d)
+    fig.tight_layout()
+
+    ax1.set_title(r"$\langle b_i, b_j \rangle$ for max memory coeff.")
+    ax2.set_title(r"$\langle b_i, b_j \rangle$ for min memory coeff.")
+    ax3.set_title("Memory coefficient for 300 $\mu m$")
+    ax4.set_title("Memory coefficient for 50 $\mu m$")
+
