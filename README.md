@@ -14,11 +14,12 @@ The frontend files are:
     - GridSearch.py searches for the values of `memory`, `sigma` and `delta_corr` required to obtain a plausible persistence length. It's required to set a range, with max and min persistence length at the beginning of the file.
     - RwExperiments.py create a set of NetGrowth experiment with the inserted properties, it's obsolete, use MeasurePersistence.py now.
 
-3. BackEnd.
+3. BackEnd:
+
 The idea is:
-    1. Get a 'morphology.swc' file with N neurons inside and decompose it in N files, NetGrowth does it into dataIO_rw.py
-    2. Import this files into `Ensemble` object. `analysis.py` and `ensemble.py`
-    3. Ensemble characterizes the popultaion with tha algorithms in `algorithms.py`
+    1. Get a 'morphology.swc' file with N neurons inside and decompose it in N files, uses NetGrowth functions for it, defined into `dataIO_swc.py`
+    2. Import this files into `EnsembleRW` object, an extension of `SWC_nsemble`. `analysis.py` and `ensemble.py`
+    3. Ensemble characterizes the population with tha algorithms in `algorithms.py`
     4. The fit are processed in `fit_analysis.py`
 
 `single_to_ensemble.py` is required to apply statistical measures over a single neuron, this is done decomposing each neuron in many segments, cut at the branching points.
