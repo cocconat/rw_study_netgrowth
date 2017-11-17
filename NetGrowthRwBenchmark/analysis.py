@@ -2,7 +2,8 @@
 #-*- coding:utf-8 -*-
 # This software is part of the NetGrowth project and the SENEC initiative
 
-from . import Ensemble
+from . import EnsembleRW
+from NetGrowth import SWC_ensemble
 
 def AnalyseNetgrowthRW(NG_populations, max_len=880, first=10):
     """
@@ -24,13 +25,17 @@ def AnalyseNetgrowthRW(NG_populations, max_len=880, first=10):
     fits: results from characterization
 
     """
-    ensembles=[]
     fits={}
+    ensemblesRW=[]
     for population in NG_populations:
-        ensemble=Ensemble(population['info'])
-        ensemble.add_population(population['neurons'])
-        ensemble.characterize(max_len,first)
+        ensemble = SWC_ensemble.FromPopulation(population)
+        ensemble.__class__ =EnsembleRW
+        ensemblesRW.append(ensemble)
+    for ensemble in ensemblesRW:
+        ensemble.characterizeRW(max_len,first)
         fits[ensemble.name]=ensemble.fit(max_len,first)
-        ensembles.append(ensemble)
-    return ensembles, fits
+    return ensemblesRW, fits
+
+
+
 
