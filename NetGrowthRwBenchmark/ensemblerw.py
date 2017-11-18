@@ -13,13 +13,29 @@ class EnsembleRW(SWC_ensemble):
 
     def __init__(self, description):
         SWC_ensemble.__init__(self,description)
-        ### Whole population averaged properties
+        ### Single neurons properties
         self.tortuosity_local =None
         self.msd_1D = None
         self.cosine = None
         self.msd_2D = None
         self.tortuosity_dm = None
         self.effective_length = None
+
+    def normalize_paths(self):
+        self.theta = None
+        self.r     = None
+        self.xy    = None
+        min_shap = self.neurons[0].axon.xy.shape[1]
+        for neuron in self.neurons:
+            if neuron.axon.xy.shape[1] < min_shap:
+                min_shap = neuron.axon.xy.shape[1]
+        min_shap=min_shap-2
+        self.theta = np.array([neuron.axon.theta[:min_shap] for neuron in self.neurons])
+        self.r     = np.array([neuron.axon.r[:min_shap] for neuron in self.neurons])
+        self.xy    = np.array([neuron.axon.xy[:,:min_shap] for neuron in self.neurons])
+
+
+
 
     def characterizeRW(self, max_len, first=1):
         """
@@ -41,6 +57,7 @@ class EnsembleRW(SWC_ensemble):
         if first < 1:
             raise Exception("first value has to be greater than one or dividion by zero occurs")
         self.max_len=max_len
+        self.normalize_paths()
         self.r=np.array(self.r)
         self.theta=np.array(self.theta)
         self.xy=np.array(self.xy)

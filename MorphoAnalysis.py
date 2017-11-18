@@ -50,9 +50,9 @@ if args.neuron:
     name=[ neuron.split("/")[1].split(".")[0] for neuron in args.neuron]
     Paths_populations.extend([np.concatenate([SwcToSegments(os.path.join(os.getcwd(),neuron), max_angle, minimum_path, element_type=[3]) for neuron in args.neuron])])
     NG_populations = [SegmentsToNetgrowth(paths, names[n], "experiment") for n,paths in enumerate(Paths_populations)]
-    ensembles, fits =AnalyseNetgrowthRW(NG_populations,int(args.max_len))
+    ensemble, fits =AnalyseNetgrowthRW(NG_populations,int(args.max_len))
     json.dump(fits,open("retina_fit.json",'w'))
-    plot_results(ensembles, "retina_plot", plot=True)
+    plot_results(ensemble, "retina_plot", plot=True)
     fit = OnlyValues(analyse_fit(fits['axon']))
     # dendrites = OnlyValues(fits['dendrites'])
     print(" ################################### \n")

@@ -62,10 +62,13 @@ def analyse_fit(fit, info=None, name=None):
         fit['sigma'] = {'values':{'a0': get_sigma(name)},
                                 'errors':{'a0':0}}
     elif info is not None:
-        print("get info from json file")
-        fit['memory'] = info['rw_memory_tau']
-        fit['sigma'] = info['rw_sensing_angle']
-        fit['pers_gauss'] = info['rw_delta_corr']
+        try:
+            fit['memory'] = info['rw_memory_tau']
+            fit['sigma'] = info['rw_sensing_angle']
+            fit['pers_gauss'] = info['rw_delta_corr']
+            print("get info from json file")
+        except:
+            pass
     else:
         warnings.warn("Name or info is necessary for fit, algorithm values not reported")
 
